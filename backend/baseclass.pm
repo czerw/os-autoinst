@@ -1281,6 +1281,7 @@ sub new_ssh_connection {
     $args{$_} //= $credentials{$_} foreach (keys(%credentials));
     $args{username} ||= 'root';
     $args{keep_open} //= 0;
+    $args{port} //= 22;
     my $connection_key;
 
     # e.g. using hyperv_intermediate host which is running Windows need to keep the connection.
@@ -1296,7 +1297,7 @@ sub new_ssh_connection {
     # Retry multiple times, in case of the guest is not running yet
     my $counter = $bmwqemu::vars{SSH_CONNECT_RETRY} // 5;
     while ($counter > 0) {
-        if ($ssh->connect($args{hostname})) {
+        if ($ssh->connect($args{hostname}, $args{port})) {
 
             if ($args{password}) {
                 $ssh->auth(username => $args{username}, password => $args{password});
